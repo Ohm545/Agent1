@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MailMind - Choose Your Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.85);
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --shadow-primary: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 2rem 1rem;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+    }
+
+    body::before {
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    body::after {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .page {
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .heading {
+      text-align: center;
+      margin-bottom: 3rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-primary);
+    }
+
+    .heading h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .heading p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+
+    .option-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 1rem 0;
+      width: 100%;
+      box-shadow: var(--shadow-primary);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--accent-gradient);
+      transition: width 0.3s ease;
+    }
+
+    .option-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .option-card:hover::before {
+      width: 8px;
+    }
+
+    .option-card:active {
+      transform: translateY(-4px);
+    }
+
+    .option-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .option-desc {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    .footer::before {
+      content: '🔒';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page {
+        max-width: 100%;
+        padding: 0;
+      }
+
+      .heading {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+      }
+
+      .heading h1 {
+        font-size: 2rem;
+      }
+
+      .heading p {
+        font-size: 1rem;
+      }
+
+      .option-card {
+        padding: 1.5rem;
+        margin: 0.8rem 0;
+      }
+
+      .option-title {
+        font-size: 1.2rem;
+      }
+
+      .footer {
+        margin-top: 2rem;
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .heading {
+        padding: 1.2rem;
+      }
+
+      .heading h1 {
+        font-size: 1.8rem;
+      }
+
+      .option-card {
+        padding: 1.2rem;
+      }
+
+      .option-title {
+        font-size: 1.1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .option-desc {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Add subtle animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .heading {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .option-card:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    .option-card:nth-child(3) {
+      animation-delay: 1s;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="heading">
+      <h1>Choose Your AI Assistant</h1>
+      <p>Pick how you'd like MailMind to help you</p>
+    </div>
+
+    <div class="option-card" onclick="location.href='paste.html'">
+      <div class="option-title">📋 Paste Email to Summarize</div>
+      <div class="option-desc">Manually paste any email, and get instant summaries, replies, and translations.</div>
+    </div>
+
+    <div class="option-card" onclick="location.href='dashboard.html'">
+      <div class="option-title">🤖 Auto Inbox Assistant</div>
+      <div class="option-desc">Let MailMind connect to your inbox and work automatically in real-time.</div>
+    </div>
+
+    <div class="footer">
+      MailMind never stores or reads anything without your permission.
+    </div>
+  </div>
+</body>
+</html>

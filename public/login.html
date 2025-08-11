@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MailMind - Your AI Email Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-bg: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --shadow-primary: 0 20px 40px rgba(0, 0, 0, 0.3);
+      --shadow-secondary: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Fixed Background Layer */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    /* Page Container - Similar to options.html */
+    .page {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Square layout for laptops */
+    @media (min-width: 1024px) {
+      .page {
+        max-width: 600px;
+        min-height: 100vh;
+        justify-content: center;
+        padding: 0;
+      }
+    }
+
+    /* Main Card Container */
+    .login-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-primary);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .login-card {
+        padding: 2rem 1.8rem;
+      }
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .header-section {
+        margin-bottom: 2rem;
+      }
+    }
+
+    .brand-logo {
+      width: 70px;
+      height: 70px;
+      background: var(--primary-gradient);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 1024px) {
+      .brand-logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.2rem;
+      }
+    }
+
+    .brand-logo::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: logoShine 3s ease-in-out infinite;
+    }
+
+    @keyframes logoShine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+      100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    }
+
+    .brand-logo svg {
+      width: 35px;
+      height: 35px;
+      color: var(--text-primary);
+      z-index: 1;
+      position: relative;
+    }
+
+    @media (min-width: 1024px) {
+      .brand-logo svg {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .main-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 1024px) {
+      .main-title {
+        font-size: 2rem;
+        margin-bottom: 0.8rem;
+      }
+    }
+
+    .main-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-weight: 400;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .main-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+    }
+
+    /* Features Section - Full width like options cards */
+    .features-section {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .features-section {
+        margin: 1.5rem 0;
+      }
+    }
+
+    .features-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    /* Feature cards styled like option cards */
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    @media (min-width: 1024px) {
+      .feature-card {
+        padding: 1.2rem;
+      }
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 1024px) {
+      .feature-icon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .feature-card:nth-child(1) .feature-icon { color: #4facfe; }
+    .feature-card:nth-child(2) .feature-icon { color: #f093fb; }
+    .feature-card:nth-child(3) .feature-icon { color: #43e97b; }
+
+    .feature-content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+    }
+
+    @media (min-width: 1024px) {
+      .feature-title {
+        font-size: 0.95rem;
+      }
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    @media (min-width: 1024px) {
+      .feature-desc {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Sign In Section */
+    .signin-section {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .signin-section {
+        margin: 1.5rem 0;
+      }
+    }
+
+    .google-signin-btn {
+      width: 100%;
+      height: 56px;
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 14px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 1024px) {
+      .google-signin-btn {
+        height: 50px;
+        font-size: 0.95rem;
+      }
+    }
+
+    .google-signin-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .google-signin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .google-signin-btn:hover::before {
+      left: 100%;
+    }
+
+    .google-signin-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .google-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .signin-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .arrow-icon {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .google-signin-btn:hover .arrow-icon {
+      transform: translateX(3px);
+    }
+
+    /* Quote Section */
+    .quote-section {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .quote-section {
+        margin: 1.5rem 0;
+      }
+    }
+
+    .quote-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .quote-card {
+        padding: 1.2rem;
+      }
+    }
+
+    .quote-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-gradient);
+    }
+
+    .quote-text {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-weight: 400;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    @media (min-width: 1024px) {
+      .quote-text {
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+    }
+
+    .quote-text::before,
+    .quote-text::after {
+      content: '"';
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* Privacy Section */
+    .privacy-section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .privacy-section {
+        padding: 1.2rem;
+        margin-top: 1.5rem;
+      }
+    }
+
+    .privacy-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .privacy-icon {
+      width: 20px;
+      height: 20px;
+      color: #43e97b;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .privacy-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    @media (min-width: 1024px) {
+      .privacy-title {
+        font-size: 0.95rem;
+      }
+    }
+
+    .privacy-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    @media (min-width: 1024px) {
+      .privacy-text {
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+    }
+
+    /* Footer - Similar to options.html */
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .footer {
+        margin-top: 1rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Loading State */
+    .loading {
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .loading .signin-text {
+      opacity: 0;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid var(--text-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 2;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+      .page {
+        padding: 1.5rem;
+      }
+
+      .login-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .main-title {
+        font-size: 1.8rem;
+      }
+
+      .main-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .feature-card {
+        padding: 1.2rem;
+      }
+
+      .google-signin-btn {
+        height: 52px;
+        font-size: 0.95rem;
+      }
+
+      .quote-card,
+      .privacy-section {
+        padding: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 1.8rem 1.2rem;
+      }
+
+      .brand-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .brand-logo svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .main-title {
+        font-size: 1.6rem;
+      }
+
+      .feature-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.8rem;
+      }
+
+      .feature-icon {
+        margin: 0;
+      }
+    }
+
+    /* Entrance Animation */
+    .page {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="login-card">
+      <!-- Header Section -->
+      <div class="header-section">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <h1 class="main-title">Welcome to MailMind</h1>
+        <p class="main-subtitle">Your AI Email Assistant — Summarize, Reply, Translate, Save Time!</p>
+      </div>
+
+      <!-- Features Section - Now styled like option cards -->
+      <div class="features-section">
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">⚡ Lightning Fast</div>
+              <div class="feature-desc">Get instant email summaries and replies in seconds</div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12,22s8-4 8-10V5l-8-3-8,3v7c0,6 8,10 8,10z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">🔒 Bank-Level Security</div>
+              <div class="feature-desc">Your emails are processed securely and never stored</div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">🤖 AI-Powered Smart</div>
+              <div class="feature-desc">Advanced AI understands context and tone perfectly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign In Section -->
+      <div class="signin-section">
+        <button class="google-signin-btn" id="googleSignIn">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span class="signin-text">Continue with Google</span>
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12,5 19,12 12,19"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Quote Section -->
+      <div class="quote-section">
+        <div class="quote-card">
+          <p class="quote-text">Don't let your inbox control your day — let AI clear it for you.</p>
+        </div>
+      </div>
+
+      <!-- Privacy Section -->
+      <div class="privacy-section">
+        <div class="privacy-header">
+          <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12,22s8-4 8-10V5l-8-3-8,3v7c0,6 8,10 8,10z"/>
+          </svg>
+          <div>
+            <h3 class="privacy-title">Your Privacy is Protected</h3>
+            <p class="privacy-text">We never store your Gmail password. You can revoke access anytime. Your email content is used only to summarize and assist — never shared or stored permanently.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      MailMind never stores or reads anything without your permission.
+    </div>
+  </div>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyAgwd2XnCcX_gFZR3ng4Rn3L6wW6OKQ6Z4",
+  authDomain: "mailmind-892c0.firebaseapp.com",
+  projectId: "mailmind-892c0",
+  storageBucket: "mailmind-892c0.firebasestorage.app",
+  messagingSenderId: "2399278557",
+  appId: "1:2399278557:web:cbd03719f01b83588ad234",
+  measurementId: "G-B8WVJ8J1L5"
+};
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/gmail.modify');
+provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
+provider.addScope('https://www.googleapis.com/auth/gmail.send');
+provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+  provider.setCustomParameters({ prompt: 'consent' });
+  document.getElementById('googleSignIn').addEventListener('click', async () => {
+    await signOut(auth);
+    const result = await signInWithPopup(auth, provider);
+    const idToken = await result.user.getIdToken();
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const accessToken = credential.accessToken;
+    localStorage.setItem('accessToken',accessToken);
+    await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken,accessToken }),
+    });
+
+    window.location.href = "/option.html";
+
+  });
+</script>
+</body>
+</html>
